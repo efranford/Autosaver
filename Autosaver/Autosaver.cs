@@ -18,13 +18,14 @@ namespace Autosaver
             {
                 //example args
                 // -b test2 -d "C:\Autosaver Test" -m timer|10000 -h test
-                Console.WriteLine("Optional arguments for Autosaver -b [branch name] -h [head branch for tip] -d [git directory optional] -f [filter *.* by default] -m [auto timer|time optional]");
+                Console.WriteLine("Optional arguments for Autosaver -b [branch name] -h [head branch for tip] -d [git directory optional] -f [filter *.* by default] -m [auto timer] -t [time optional]");
                 var arguments = GetArguments(args);
                 var branchName = arguments.ContainsKey("b") ? arguments["b"] : "autosave_branch_" + DateTime.Now.ToFileTime();
                 var headName = arguments.ContainsKey("h") ? arguments["h"] : "master";
                 var folder = arguments.ContainsKey("d") ? arguments["d"] : Directory.GetCurrentDirectory();
                 var filter = arguments.ContainsKey("f") ? arguments["f"] : "*.*";
                 var mode = arguments.ContainsKey("m") ? arguments["m"] : "auto";
+                var time = arguments.ContainsKey("t") ? int.Parse(arguments["t"]) : -1;
                 if (Directory.Exists(folder))
                 {
                     using (var repo = InitRepository(folder))
@@ -44,7 +45,6 @@ namespace Autosaver
                             }
                             else
                             {
-                                var time = int.Parse(mode.Split('|')[1]);
                                 var watcher = new FileSystemWatcher(folder, filter) { IncludeSubdirectories = true };
                                 var changes = new List<WaitForChangedResult>();
                                 var timer = new Timer(time);
